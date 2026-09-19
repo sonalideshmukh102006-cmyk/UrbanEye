@@ -1,9 +1,9 @@
-import { Bus, Activity, AlertTriangle } from 'lucide-react';
+import { Bus, Activity, AlertTriangle, Radio } from 'lucide-react';
 import { useStore } from '../store/useStore';
 
 export default function TopNav() {
-  const {
-    activeBuses, cityHealth, criticalAlerts,
+  const { 
+    activeBuses, cityHealth, criticalAlerts, isServerConnected,
     setShowFleetModal, setShowCriticalAlertsModal, setShowCityHealthModal
   } = useStore();
 
@@ -12,11 +12,19 @@ export default function TopNav() {
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center font-black text-lg shadow-sm">UE</div>
         <div className="flex flex-col justify-center">
-          <h1 className="text-xl font-bold tracking-tight text-gray-800 leading-none mb-1">UrbanEye</h1>
-          <span className="text-xs text-gray-500 font-medium leading-none">Central Intelligence</span>
+          <h1 className="text-xl font-bold tracking-tight text-gray-800 leading-none mb-1">
+            UrbanEye <span className="font-light text-gray-500 text-sm hidden sm:inline">| Central Intelligence</span>
+          </h1>
         </div>
-        <div className="ml-4 px-2.5 py-1 bg-orange-100 border border-orange-200 text-orange-700 text-[10px] font-black uppercase tracking-widest rounded-md hidden md:block">
-          Prototype • Seeded Data
+
+        {/* Live Server Ingest Status Indicator */}
+        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border transition-colors ${
+          isServerConnected 
+            ? 'bg-emerald-50 text-emerald-700 border-emerald-300' 
+            : 'bg-amber-50 text-amber-700 border-amber-300'
+        }`}>
+          <Radio className={`w-3.5 h-3.5 ${isServerConnected ? 'animate-pulse text-emerald-600' : 'text-amber-600'}`} />
+          <span>{isServerConnected ? 'Live Edge Connected' : 'Simulator Idle / Disconnected'}</span>
         </div>
       </div>
 
@@ -55,7 +63,6 @@ export default function TopNav() {
         </div>
 
         <div className="h-6 w-px bg-gray-300 hidden sm:block"></div>
-
       </div>
     </header>
   );
