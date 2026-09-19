@@ -1,5 +1,6 @@
-import { ArrowLeft, Search, Filter, MapPin, AlertTriangle, Waves, Camera, Baseline, Navigation, Columns } from 'lucide-react';
+import { ArrowLeft, Search, Filter, MapPin, AlertTriangle, Waves, Camera, Baseline, Navigation, Columns, Download } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useState } from 'react';
 import { MOCK_INCIDENTS } from '../data/mockData';
 import { useStore } from '../store/useStore';
 
@@ -7,8 +8,38 @@ export default function DefectList() {
   const navigate = useNavigate();
   const { type } = useParams<{ type: string }>();
   const { flyTo, setSelectedIncident, setReturnUrl } = useStore();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [severityFilter, setSeverityFilter] = useState('All');
 
-  const defects = MOCK_INCIDENTS.filter(i => i.type === type);
+  const filteredDefects = MOCK_INCIDENTS.filter(i => {
+    if (i.type !== type) return false;
+    const matchesSearch = 
+      i.id.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      i.locationName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      i.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSeverity = severityFilter === 'All' || i.severity === severityFilter;
+    return matchesSearch && matchesSeverity;
+  });
+
+  const exportToCSV = () => {
+    const headers = ['Incident ID', 'Type', 'Severity', 'Location', 'Latitude', 'Longitude', 'Description'];
+    const csvContent = [
+      headers.join(','),
+      ...filteredDefects.map(d => 
+        `"${d.id}","${d.type}","${d.severity}","${d.locationName}","${d.latitude}","${d.longitude}","${d.description.replace(/"/g, '""')}"`
+      )
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${type}_defects.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const getIcon = () => {
     if (type === 'Pothole') return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
@@ -54,7 +85,7 @@ export default function DefectList() {
             <h1 className="text-xl font-black text-foreground flex items-center gap-2 uppercase tracking-tight">
               {getIcon()} {getTitle()}
             </h1>
-            <p className="text-sm text-muted-foreground">{defects.length} incidents requiring attention</p>
+            <p className="text-sm text-muted-foreground">{filteredDefects.length} incidents requiring attention</p>
           </div>
         </div>
 
@@ -63,12 +94,31 @@ export default function DefectList() {
             <Search className="w-4 h-4 text-muted-foreground mr-2" />
             <input
               type="text"
-              placeholder="Search location..."
+              placeholder="Search location, ID..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="bg-transparent border-none outline-none text-sm text-foreground w-full placeholder:text-muted-foreground"
             />
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-background border border-border hover:bg-muted rounded-lg text-sm font-bold text-foreground transition-colors shadow-sm">
-            <Filter className="w-4 h-4" /> Filter
+          <div className="flex items-center bg-background border border-border rounded-lg px-3 py-2 shadow-sm">
+            <Filter className="w-4 h-4 text-muted-foreground mr-2" />
+            <select
+              value={severityFilter}
+              onChange={(e) => setSeverityFilter(e.target.value)}
+              className="bg-transparent border-none outline-none text-sm text-foreground font-medium cursor-pointer"
+            >
+              <option value="All">All Severities</option>
+              <option value="Critical">Critical</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+          <button 
+            onClick={exportToCSV}
+            className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 rounded-lg text-sm font-bold text-primary-foreground transition-colors shadow-sm"
+          >
+            <Download className="w-4 h-4" /> Export CSV
           </button>
         </div>
       </div>
@@ -76,7 +126,7 @@ export default function DefectList() {
       {/* Grid Content */}
       <div className="flex-1 overflow-auto p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {defects.map((defect) => (
+          {filteredDefects.map((defect) => (
             <div
               key={defect.id}
               onClick={() => handleIncidentClick(defect)}

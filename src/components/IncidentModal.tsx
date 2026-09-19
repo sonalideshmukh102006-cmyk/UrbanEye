@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, CheckCircle2, Shield, MapPin, AlertTriangle, Send, Building2, Truck, Search, Users } from 'lucide-react';
+import { X, CheckCircle2, Shield, MapPin, AlertTriangle, Send, Building2, Truck, Search, Users, Info } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,6 +10,7 @@ export default function IncidentModal() {
   const [localStatus, setLocalStatus] = useState<string>('');
   const [showDispatchMenu, setShowDispatchMenu] = useState(false);
   const [expandedImage, setExpandedImage] = useState<string | null>(null);
+  const [showConfidenceDetails, setShowConfidenceDetails] = useState(false);
 
   useEffect(() => {
     if (selectedIncident) {
@@ -153,6 +154,14 @@ export default function IncidentModal() {
                   <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wider">Detected Vehicle</p>
                     <p className="text-lg font-bold text-foreground font-mono">{selectedIncident.vehicleNo}</p>
+                    {selectedIncident.confidenceScore && (
+                      <button 
+                        onClick={() => setShowConfidenceDetails(true)}
+                        className="mt-1 flex items-center gap-1 text-[11px] font-bold text-green-700 bg-green-100 border border-green-200 px-2 py-0.5 rounded cursor-pointer hover:bg-green-200 transition-colors"
+                      >
+                         Confidence: {selectedIncident.confidenceScore}% <Info className="w-3 h-3" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -209,6 +218,60 @@ export default function IncidentModal() {
               alt="Enlarged view" 
               className="max-w-full max-h-[85vh] rounded-lg shadow-2xl border border-white/20" 
             />
+          </div>
+        </div>
+      )}
+
+      {/* Confidence Details Modal */}
+      {showConfidenceDetails && selectedIncident.confidenceScore && (
+        <div 
+          className="fixed inset-0 z-[110] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm"
+          onClick={() => setShowConfidenceDetails(false)}
+        >
+          <div 
+            className="bg-card rounded-xl max-w-md w-full p-6 shadow-2xl border border-border"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold flex items-center gap-2 text-foreground">
+                <CheckCircle2 className="w-5 h-5 text-green-500" /> 
+                ANPR Confidence Analysis
+              </h3>
+              <button onClick={() => setShowConfidenceDetails(false)}>
+                <X className="w-5 h-5 text-muted-foreground hover:text-foreground" />
+              </button>
+            </div>
+            
+            <div className="space-y-4 text-sm">
+              <div className="flex items-center justify-between p-3 bg-muted rounded-lg border border-border">
+                <span className="font-bold text-foreground">Overall Score</span>
+                <span className="text-xl font-bold text-green-600 dark:text-green-400">{selectedIncident.confidenceScore}%</span>
+              </div>
+              
+              <div className="space-y-2">
+                <h4 className="font-bold text-foreground">Calculation Basis for this Report:</h4>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex gap-2">
+                    <span className="text-green-500">✓</span> 
+                    <span><strong>Character Clarity:</strong> Optical Character Recognition (OCR) matched letters clearly without motion blur.</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-green-500">✓</span> 
+                    <span><strong>Lighting & Contrast:</strong> Sufficient illumination on the retroreflective plate surface.</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-green-500">✓</span> 
+                    <span><strong>Angle & Perspective:</strong> Vehicle captured at an optimal angle (&lt; 30 degrees).</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className={selectedIncident.confidenceScore > 90 ? "text-green-500" : "text-orange-500"}>
+                      {selectedIncident.confidenceScore > 90 ? "✓" : "!"}
+                    </span> 
+                    <span><strong>Plate Condition:</strong> {selectedIncident.confidenceScore > 90 ? "Clean plate surface with no major obstructions." : "Minor obstructions or dirt detected, slightly lowering the score."}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       )}
