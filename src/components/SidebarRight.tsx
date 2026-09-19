@@ -148,15 +148,15 @@ export default function SidebarRight() {
       
       {/* Vehicle Alerts Quick Links at the bottom */}
       <div className="flex gap-3 p-3 border-t border-orange-200/50 bg-gradient-to-b from-[#FFF9F2] to-orange-50/30 sticky bottom-0 shrink-0 z-10">
-        <button 
-          onClick={() => window.open('/vehicle-alerts', '_blank')}
-          className="w-1/3 bg-gradient-to-br from-orange-50 to-orange-100 text-orange-700 text-[11px] sm:text-xs font-black py-3 px-2 rounded-xl flex flex-col items-center justify-center gap-2 hover:from-orange-100 hover:to-orange-200 transition-all shadow-sm text-center border border-orange-200 shrink-0 group relative overflow-hidden"
+        <div 
+          className="w-1/3 bg-gradient-to-br from-orange-50 to-orange-100 text-orange-700 text-[11px] sm:text-xs font-black py-3 px-2 rounded-xl flex flex-col items-center justify-center gap-2 shadow-sm text-center border border-orange-200 shrink-0 relative overflow-hidden"
         >
-          <div className="absolute inset-0 bg-orange-500/10 scale-0 group-hover:scale-150 rounded-full transition-transform duration-500 ease-out"></div>
-          <AlertCircle className="w-7 h-7 text-orange-600 group-hover:scale-110 transition-transform relative z-10" />
+          <AlertCircle className="w-7 h-7 text-orange-600 relative z-10" />
           <span className="relative z-10 leading-tight">VEHICLE<br/>ALERTS</span>
-        </button>
+        </div>
         <div className="w-2/3 flex flex-col gap-2 overflow-hidden justify-between">
+          <div className="flex flex-col gap-1.5">
+
           {MOCK_VIOLATIONS.slice(0, 3).map((v, idx) => (
             <div 
               key={idx} 
@@ -175,6 +175,13 @@ export default function SidebarRight() {
                </span>
             </div>
           ))}
+          </div>
+          <button 
+            onClick={() => navigate('/reports')}
+            className="w-full py-1.5 mt-0.5 bg-orange-100 hover:bg-orange-200 border border-orange-200 rounded-lg text-[10px] uppercase font-bold text-orange-800 transition-colors shadow-sm"
+          >
+            View All Reports
+          </button>
         </div>
       </div>
     </div>

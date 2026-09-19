@@ -411,7 +411,16 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
         {mapLayers.liveBottlenecks && MOCK_TRAFFIC_CORRIDORS
           .filter(c => c.density > 85 || c.status === 'Gridlock')
           .map(c => (
-            <Marker key={`bottleneck-${c.id}`} longitude={c.coordinates[0][0]} latitude={c.coordinates[0][1]} anchor="center">
+            <Marker 
+              key={`bottleneck-${c.id}`} 
+              longitude={c.coordinates[0][0]} 
+              latitude={c.coordinates[0][1]} 
+              anchor="center"
+              onClick={(e) => {
+                e.originalEvent.stopPropagation();
+                setSelectedCorridor(c);
+              }}
+            >
               <div className="relative flex items-center justify-center cursor-pointer group">
                 <div className="absolute w-24 h-24 bg-red-500/20 rounded-full animate-ping pointer-events-none" style={{ animationDuration: '3s' }}></div>
                 <div className="absolute w-12 h-12 bg-red-500/40 rounded-full animate-ping pointer-events-none" style={{ animationDuration: '1.5s' }}></div>

@@ -10,17 +10,22 @@ export default function TopNav() {
   return (
     <header className="h-16 flex items-center justify-between px-6 bg-white border-b border-blue-200 shadow-sm z-10">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center font-black text-lg shadow-sm">UE</div>
-        <div className="flex flex-col justify-center">
-          <h1 className="text-xl font-bold tracking-tight text-gray-800 leading-none mb-1">
-            UrbanEye <span className="font-light text-gray-500 text-sm hidden sm:inline">| Central Intelligence</span>
+        <div className="w-12 h-12 rounded-lg bg-gray-900 flex items-center justify-center shadow-md overflow-hidden border border-cyan-800/50">
+          <img src="/public/11.png" alt="Sahasrāksha Logo" className="w-full h-full object-contain" />
+        </div>
+        <div className="flex flex-col justify-center ml-3 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-[0.15em] text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-blue-900 to-slate-800 leading-none drop-shadow-sm uppercase" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+            SAHASRĀKSHA
           </h1>
+          <span className="text-[10px] font-bold tracking-[0.25em] text-cyan-700/90 uppercase hidden sm:block mt-1">
+            Central Intelligence
+          </span>
         </div>
 
         {/* Live Server Ingest Status Indicator */}
         <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border transition-colors ${isServerConnected
-            ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
-            : 'bg-amber-50 text-amber-700 border-amber-300'
+          ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+          : 'bg-amber-50 text-amber-700 border-amber-300'
           }`}>
           <Radio className={`w-3.5 h-3.5 ${isServerConnected ? 'animate-pulse text-emerald-600' : 'text-amber-600'}`} />
           <span>{isServerConnected ? 'Live Edge Connected' : 'Protoype - Seeded Data'}</span>

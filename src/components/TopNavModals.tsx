@@ -8,6 +8,7 @@ export default function TopNavModals() {
     showCriticalAlertsModal, setShowCriticalAlertsModal,
     showFleetOnMap, setShowFleetOnMap,
     investigationIncident, setInvestigationIncident,
+    setSelectedIncident,
     flyTo,
     showCityHealthModal, setShowCityHealthModal, cityHealth
   } = useStore();
@@ -197,10 +198,10 @@ export default function TopNavModals() {
               <div className="flex items-center gap-3">
                 <button 
                   onClick={() => {
-                    setInvestigationIncident(null);
-                    setShowCriticalAlertsModal(true);
-                  }}
-                  className="p-1 hover:bg-black/5 rounded transition-colors text-gray-600"
+                  setSelectedIncident(investigationIncident);
+                  setInvestigationIncident(null);
+                }}
+                className="p-1 hover:bg-black/5 rounded transition-colors text-gray-600"
                 >
                   <ArrowLeft className="w-5 h-5" />
                 </button>
@@ -211,8 +212,8 @@ export default function TopNavModals() {
               </div>
               <button 
                 onClick={() => {
+                  setSelectedIncident(investigationIncident);
                   setInvestigationIncident(null);
-                  setShowCriticalAlertsModal(true);
                 }}
                 className="p-2 rounded-full hover:bg-black/5 transition-colors text-gray-600"
               >
