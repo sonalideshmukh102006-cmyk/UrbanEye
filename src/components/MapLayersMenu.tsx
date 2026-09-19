@@ -10,16 +10,16 @@ export default function MapLayersMenu() {
         <Layers className="w-5 h-5 text-blue-600" />
         <h3 className="font-bold text-gray-800 tracking-wide">Map Layers</h3>
       </div>
-      
+
       <div className="flex flex-col gap-3 overflow-y-auto p-4">
         {[
-          { id: 'pedestrianSafety', label: 'Pedestrian Safety Zones' },
+          { id: 'pedestrianSafety', label: 'Unsafe Zone For Pedestrians' },
           { id: 'liveBottlenecks', label: 'Live Bottlenecks (Gridlocks)' },
           { id: 'vehicleDensity', label: 'Vehicle Density' },
           { id: 'liveFleet', label: 'Live Fleet (Buses)' },
           { id: 'crowdDensity', label: 'Crowd Density' },
           { id: 'infrastructure', label: 'Infrastructure (Signs/Lines)' },
-          { id: 'defectRadar', label: 'Defect Radar (Potholes)' },
+          { id: 'defectRadar', label: 'Defect Radar (Potholes & WaterLogging)' },
           { id: 'emergency', label: 'Emergency (Cave-ins/Trees)' },
           { id: 'vehicleAlerts', label: 'Vehicle Alerts (Violations)' }
         ].map(layer => (

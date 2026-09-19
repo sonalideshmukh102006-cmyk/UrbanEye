@@ -6,6 +6,7 @@ import FullscreenMap from './pages/FullscreenMap';
 import AllReports from './pages/AllReports';
 import DefectList from './pages/DefectList';
 import IncidentModal from './components/IncidentModal';
+import CorridorStatsModal from './components/CorridorStatsModal';
 import TopNavModals from './components/TopNavModals';
 import ActionCenter from './components/ActionCenter';
 import VehicleEmergencyAlertsPanel from './components/VehicleEmergencyAlertsPanel';
@@ -27,6 +28,7 @@ function App() {
           <Route path="/vehicle-alerts" element={<div className="flex-1 overflow-auto bg-gray-50 p-4"><VehicleEmergencyAlertsPanel /></div>} />
         </Routes>
         <IncidentModal />
+        <CorridorStatsModal />
         <TopNavModals />
       </div>
     </BrowserRouter>

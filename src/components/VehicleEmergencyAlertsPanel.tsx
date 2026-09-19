@@ -48,6 +48,11 @@ export default function VehicleEmergencyAlertsPanel() {
               <div className="text-xs text-gray-500 leading-relaxed">
                 Loc: {violation.location} <br />
                 ID: {violation.id} • Source: {violation.bus}
+                {violation.confidenceScore && (
+                  <span className="block text-[10px] text-green-600 font-medium mt-0.5">
+                    ANPR Confidence: {violation.confidenceScore}%
+                  </span>
+                )}
               </div>
             </div>
           ))}

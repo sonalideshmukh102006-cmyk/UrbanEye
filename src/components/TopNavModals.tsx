@@ -37,13 +37,6 @@ export default function TopNavModals() {
               </div>
               <div className="flex items-center gap-3">
                 <button 
-                  onClick={handleShowFleetOnMap}
-                  className={`flex items-center gap-2 px-3 py-1.5 text-sm font-bold rounded-lg transition-colors border ${showFleetOnMap ? 'bg-blue-500 text-white border-blue-500' : 'bg-background text-foreground border-border hover:bg-muted'}`}
-                >
-                  <Eye className="w-4 h-4" />
-                  {showFleetOnMap ? 'Hide on Map' : 'Show on Map'}
-                </button>
-                <button 
                   onClick={() => setShowFleetModal(false)}
                   className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
                 >
@@ -248,7 +241,7 @@ export default function TopNavModals() {
               </div>
 
               {/* Step 2: Verification */}
-              {investigationIncident.verifyingBusId && (
+              {(investigationIncident.status === 'Verified' || investigationIncident.verifyingBusId) && (
                 <div className="flex gap-4 relative">
                   <div className="flex flex-col items-center">
                     <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-500 flex items-center justify-center z-10 shrink-0">
@@ -261,11 +254,11 @@ export default function TopNavModals() {
                       <h3 className="font-bold text-blue-800 flex items-center gap-2">
                         <CheckCircle2 className="w-4 h-4" /> Status Verified
                       </h3>
-                      <p className="text-sm text-blue-600 mt-1 max-w-[250px]">Incident presence confirmed by passing transit vehicle. No duplicate photo needed.</p>
+                      <p className="text-sm text-blue-600 mt-1 max-w-[250px]">Incident presence confirmed. No duplicate photo needed.</p>
                     </div>
                     <div className="text-right">
                       <p className="text-[10px] text-blue-400 font-bold uppercase tracking-wider">Verified By</p>
-                      <p className="font-black text-blue-700">{investigationIncident.verifyingBusId}</p>
+                      <p className="font-black text-blue-700">{investigationIncident.verifyingBusId || 'ANPR / Traffic Cam'}</p>
                     </div>
                   </div>
                 </div>
@@ -296,7 +289,7 @@ export default function TopNavModals() {
                     <p className="text-xs text-green-600 mt-2 font-bold uppercase tracking-wider">Verified By: {investigationIncident.resolvedByBusId}</p>
                   </div>
                 </div>
-              ) : investigationIncident.verifyingBusId ? (
+              ) : (investigationIncident.status === 'Verified' || investigationIncident.verifyingBusId) ? (
                 <div className="flex gap-4 relative">
                   <div className="flex flex-col items-center">
                     <div className="w-8 h-8 rounded-full bg-orange-100 text-orange-500 flex items-center justify-center z-10 shrink-0">
@@ -317,7 +310,7 @@ export default function TopNavModals() {
                   </div>
                   <div className="flex-1 bg-white border border-dashed border-slate-200 p-4 rounded-xl shadow-sm opacity-70">
                     <h3 className="font-bold text-slate-800">Pending Verification & Resolution</h3>
-                    <p className="text-sm text-slate-600 mt-1">This incident is yet to be verified by a passing vehicle. Awaiting updates.</p>
+                    <p className="text-sm text-slate-600 mt-1">This incident is yet to be verified. Awaiting updates.</p>
                   </div>
                 </div>
               )}

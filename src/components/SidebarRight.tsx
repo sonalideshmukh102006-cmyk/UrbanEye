@@ -147,7 +147,7 @@ export default function SidebarRight() {
       </div>
       
       {/* Action Center & Vehicle Alerts Quick Links at the bottom */}
-      <div className="flex gap-2 p-4 mt-auto border-t border-gray-200 bg-[#FFF9F2] sticky bottom-0 shrink-0 z-10">
+      <div className="flex gap-2 p-4 border-t border-gray-200 bg-[#FFF9F2] sticky bottom-0 shrink-0 z-10">
         <button 
           onClick={() => window.open('/action-center', '_blank')}
           className="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-3 px-2 rounded-xl flex flex-col items-center justify-center gap-1.5 hover:bg-blue-100 transition-colors shadow-sm text-center border border-blue-200"

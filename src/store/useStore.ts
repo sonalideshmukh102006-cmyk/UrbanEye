@@ -8,9 +8,11 @@ export interface DashboardState {
   cityHealth: number;
   criticalAlerts: number;
   selectedIncident: any | null;
+  selectedCorridor: any | null;
   returnUrl: string | null;
   investigationIncident: any | null;
   setSelectedIncident: (incident: any | null) => void;
+  setSelectedCorridor: (corridor: any | null) => void;
   setReturnUrl: (url: string | null) => void;
   setInvestigationIncident: (incident: any | null) => void;
   mapViewport: { longitude: number; latitude: number; zoom: number; pitch: number; transitionDuration?: number };
@@ -58,9 +60,11 @@ export const useStore = create<DashboardState>((set) => ({
   criticalAlerts: 3,
   
   selectedIncident: null,
+  selectedCorridor: null,
   returnUrl: null,
   investigationIncident: null,
   setSelectedIncident: (incident) => set({ selectedIncident: incident }),
+  setSelectedCorridor: (corridor) => set({ selectedCorridor: corridor }),
   setReturnUrl: (url) => set({ returnUrl: url }),
   setInvestigationIncident: (incident) => set({ investigationIncident: incident }),
 

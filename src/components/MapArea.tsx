@@ -5,23 +5,23 @@ import { useNavigate } from 'react-router-dom';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useStore } from '../store/useStore';
 import { MOCK_BUSES, MOCK_INCIDENTS, MOCK_TRAFFIC_CORRIDORS, MOCK_CROWD_HOTSPOTS, MOCK_VIOLATIONS } from '../data/mockData';
-import { Bus, AlertTriangle, AlertCircle, Info, Maximize2, Search, ArrowLeft, Layers, Zap, Car, MapPin, LocateFixed, Users } from 'lucide-react';
+import { Bus, AlertTriangle, AlertCircle, Info, Maximize2, Search, ArrowLeft, Layers, Zap, Car, MapPin, LocateFixed, Users, Droplets, CircleDot } from 'lucide-react';
 
-const GOOGLE_STYLE = {
+const OSM_STYLE = {
   version: 8,
   sources: {
-    'google-tiles': {
+    'osm-tiles': {
       type: 'raster',
-      tiles: ['https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'],
+      tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
       tileSize: 256,
-      attribution: 'Map data &copy; Google'
+      attribution: '&copy; OpenStreetMap contributors'
     }
   },
   layers: [
     {
-      id: 'google-tiles-layer',
+      id: 'osm-tiles-layer',
       type: 'raster',
-      source: 'google-tiles',
+      source: 'osm-tiles',
       minzoom: 0,
       maxzoom: 19
     }
@@ -29,7 +29,7 @@ const GOOGLE_STYLE = {
 };
 
 export default function MapArea({ isFullscreen = false }: { isFullscreen?: boolean }) {
-  const { theme, mapViewport, onMapMove, setSelectedIncident, mapLayers, toggleMapLayer } = useStore();
+  const { theme, mapViewport, onMapMove, setSelectedIncident, setSelectedCorridor, mapLayers, toggleMapLayer } = useStore();
   const navigate = useNavigate();
   const mapRef = useRef<MapRef>(null);
 
@@ -102,12 +102,42 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
     mapRef.current?.flyTo({ center: [73.8567, 18.5204], zoom: 13, duration: 1500 });
   };
 
-  const getIncidentIcon = (severity: string) => {
+  const getIncidentIcon = (severity: string, type?: string) => {
+    if (type === 'Pothole') {
+      return (
+        <div className="bg-neutral-800 text-amber-500 p-1.5 rounded-full shadow-lg border-2 border-white">
+          <CircleDot className="w-5 h-5" />
+        </div>
+      );
+    }
+    if (type === 'WaterLogging') {
+      return (
+        <div className="bg-blue-900 text-blue-200 p-1.5 rounded-full shadow-lg border-2 border-white">
+          <Droplets className="w-5 h-5" />
+        </div>
+      );
+    }
+    
     switch (severity) {
       case 'Critical': return <AlertTriangle className="w-6 h-6 text-red-500 fill-red-500/20 animate-pulse" />;
       case 'High': return <AlertCircle className="w-5 h-5 text-orange-500 fill-orange-500/20" />;
       case 'Medium': return <Info className="w-5 h-5 text-yellow-500 fill-yellow-500/20" />;
-      default: return <div className="w-3 h-3 rounded-full bg-blue-500 ring-2 ring-white/50" />;
+      default: return <div className="w-3 h-3 rounded-full bg-blue-50 ring-2 ring-white/50" />;
+    }
+  };
+
+  const interactiveLayerIds = mapLayers.vehicleDensity 
+    ? MOCK_TRAFFIC_CORRIDORS.map(c => `layer-${c.id}`)
+    : [];
+
+  const handleMapClick = (event: any) => {
+    const feature = event.features?.[0];
+    if (feature && feature.layer.id.startsWith('layer-TC-')) {
+      const corridorId = feature.layer.id.replace('layer-', '');
+      const corridor = MOCK_TRAFFIC_CORRIDORS.find(c => c.id === corridorId);
+      if (corridor) {
+        setSelectedCorridor(corridor);
+      }
     }
   };
 
@@ -192,8 +222,11 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
         ref={mapRef}
         {...mapViewport}
         onMove={evt => onMapMove(evt.viewState)}
-        mapStyle={GOOGLE_STYLE as any}
+        onClick={handleMapClick}
+        interactiveLayerIds={interactiveLayerIds}
+        mapStyle={OSM_STYLE as any}
         attributionControl={false}
+        cursor={interactiveLayerIds.length > 0 ? 'pointer' : 'grab'}
       >
         <NavigationControl position="bottom-right" />
 
@@ -235,7 +268,7 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
                     </div>
                   </div>
                 ) : (
-                  getIncidentIcon(incident.severity)
+                  getIncidentIcon(incident.severity, incident.type)
                 )}
               </div>
             </Marker>
@@ -272,22 +305,21 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
                 }
               }}
             >
-              {/* Glow Layer */}
+              {/* Outline Layer for better visibility against light map */}
               <Layer 
-                id={`layer-glow-${corridor.id}`}
+                id={`layer-outline-${corridor.id}`}
                 type="line"
                 layout={{
                   'line-cap': 'round',
                   'line-join': 'round'
                 }}
                 paint={{
-                  'line-color': color,
-                  'line-width': 16,
-                  'line-opacity': 0.4,
-                  'line-blur': 5
+                  'line-color': '#ffffff',
+                  'line-width': 10,
+                  'line-opacity': 0.7
                 }}
               />
-              {/* Core Layer */}
+              {/* Core Route Layer */}
               <Layer 
                 id={`layer-${corridor.id}`}
                 type="line"
@@ -331,8 +363,8 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
                 50, 'rgba(249, 115, 22, 0.8)', // orange for medium density (50 - 79)
                 80, 'rgba(239, 68, 68, 0.8)' // red for high density (>= 80)
               ],
-              'circle-blur': 0.6,
-              'circle-opacity': 0.9,
+              'circle-blur': 0.2,
+              'circle-opacity': 0.85,
               'circle-pitch-alignment': 'map'
             }}
           />

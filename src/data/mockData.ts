@@ -33,9 +33,11 @@ export interface Incident {
 
 // Centered around Pune (18.5204, 73.8567) as an example
 export const MOCK_BUSES: BusLocation[] = [
-  { id: 'BUS-101', route: 'Express A', longitude: 73.8567, latitude: 18.5204, delay: 0 },
-  { id: 'BUS-102', route: 'Local B', longitude: 73.8600, latitude: 18.5150, delay: 5 },
-  { id: 'BUS-103', route: 'Express C', longitude: 73.8450, latitude: 18.5250, delay: 12 },
+  { id: 'BUS-101', route: 'Swargate - Katraj', longitude: 73.8567, latitude: 18.5204, delay: 0 },
+  { id: 'BUS-102', route: 'Pune Station - Kothrud', longitude: 73.8600, latitude: 18.5150, delay: 5 },
+  { id: 'BUS-103', route: 'Shivajinagar - Hadapsar', longitude: 73.8450, latitude: 18.5250, delay: 12 },
+  { id: 'BUS-104', route: 'Deccan - Viman Nagar', longitude: 73.9100, latitude: 18.5600, delay: 2 },
+  { id: 'BUS-105', route: 'Wakad - Hinjewadi', longitude: 73.7500, latitude: 18.5900, delay: 8 },
 ];
 
 export const MOCK_INCIDENTS = [
@@ -147,38 +149,38 @@ export const MOCK_INCIDENTS = [
     croppedImageUrl: 'https://c8.alamy.com/comp/AA7J1E/crash-damage-to-a-safety-barrier-on-the-roadside-AA7J1E.jpg',
     status: 'Detected unverified', assignee: 'Traffic Unit 2', source: 'BUS-103 Cam', time: '3 hrs ago'
   },
-  
+
   // --- VULNERABLE PEDESTRIANS ---
   {
     id: 'INC-018', type: 'VulnerablePedestrian', description: 'School children crossing outside of designated crosswalk during high traffic', locationName: 'Fergusson College Road', latitude: 18.5240, longitude: 73.8400, severity: 'Critical',
-    imageUrl: 'https://images.unsplash.com/photo-1576722003889-1833d7b97374?auto=format&fit=crop&q=60&w=800',
-    croppedImageUrl: 'https://images.unsplash.com/photo-1576722003889-1833d7b97374?auto=format&fit=crop&q=60&w=300',
+    imageUrl: 'https://media.istockphoto.com/id/1152655666/photo/school-children-cross-the-street-on-the-way-home.jpg?s=612x612&w=is&k=20&c=y9Bv-QQJdvJ6E1WIHy4JtrwCZ5tv9PjYajFwGK3S-ig=',
+    croppedImageUrl: 'https://media.istockphoto.com/id/1152655666/photo/school-children-cross-the-street-on-the-way-home.jpg?s=612x612&w=is&k=20&c=y9Bv-QQJdvJ6E1WIHy4JtrwCZ5tv9PjYajFwGK3S-ig=',
     status: 'Unverified', assignee: 'Local Traffic Police', source: 'BUS-110 Cam', time: '2 mins ago'
   },
   {
     id: 'INC-019', type: 'VulnerablePedestrian', description: 'Elderly pedestrians struggling to cross wide intersection without signal', locationName: 'Kothrud Stand', latitude: 18.5020, longitude: 73.8150, severity: 'High',
-    imageUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=60&w=800',
-    croppedImageUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=60&w=300',
+    imageUrl: "/Gemini_Generated_Image_steuansteuansteu.png",
+    croppedImageUrl: "/Gemini_Generated_Image_steuansteuansteu.png",
     status: 'Verified', assignee: 'Ward Marshal', source: 'BUS-203 Cam', time: '15 mins ago'
   }
 ];
 
 export const MOCK_TRAFFIC_CORRIDORS = [
-  { id: 'TC-1', name: 'MG Road Corridor', density: 85, status: 'High Congestion', delay: '12 min', lastUpdatedMinutesAgo: 5, sourceBus: 'BUS-102', coordinates: [[73.8767, 18.5104], [73.8750, 18.5125], [73.8720, 18.5150], [73.8680, 18.5175], [73.8640, 18.5200], [73.8600, 18.5220]] },
-  { id: 'TC-2', name: 'FC Road', density: 60, status: 'Moderate', delay: '5 min', lastUpdatedMinutesAgo: 12, sourceBus: 'BUS-105', coordinates: [[73.8400, 18.5250], [73.8410, 18.5220], [73.8430, 18.5180], [73.8450, 18.5150], [73.8470, 18.5120], [73.8480, 18.5100]] },
-  { id: 'TC-3', name: 'JM Road', density: 30, status: 'Clear', delay: '0 min', lastUpdatedMinutesAgo: 45, sourceBus: 'BUS-108', coordinates: [[73.8500, 18.5300], [73.8510, 18.5270], [73.8530, 18.5230], [73.8550, 18.5200], [73.8555, 18.5170], [73.8560, 18.5150]] },
-  { id: 'TC-4', name: 'Swargate Junction', density: 95, status: 'Gridlock', delay: '25 min', lastUpdatedMinutesAgo: 2, sourceBus: 'BUS-201', coordinates: [[73.8585, 18.5010]] },
-  { id: 'TC-5', name: 'Koregaon Park Road', density: 75, status: 'High Congestion', delay: '10 min', lastUpdatedMinutesAgo: 35, sourceBus: 'BUS-112', coordinates: [[73.8950, 18.5350]] },
-  { id: 'TC-6', name: 'Viman Nagar Highway', density: 45, status: 'Moderate', delay: '2 min', lastUpdatedMinutesAgo: 8, sourceBus: 'BUS-110', coordinates: [[73.9160, 18.5620]] },
-  { id: 'TC-7', name: 'Pune Station Road', density: 88, status: 'High Congestion', delay: '15 min', lastUpdatedMinutesAgo: 50, sourceBus: 'BUS-103', coordinates: [[73.8730, 18.5280]] },
-  { id: 'TC-8', name: 'Kothrud Stand Road', density: 55, status: 'Moderate', delay: '4 min', lastUpdatedMinutesAgo: 15, sourceBus: 'BUS-115', coordinates: [[73.8100, 18.5050]] },
+  { id: 'TC-1', name: 'MG Road Corridor', density: 85, status: 'High Congestion', delay: '12 min', lastUpdatedMinutesAgo: 5, sourceBus: 'BUS-102', coordinates: [[73.8767, 18.5104], [73.8750, 18.5125], [73.8720, 18.5150], [73.8680, 18.5175], [73.8640, 18.5200], [73.8600, 18.5220]], vehicleStats: { heavy: 24, fourWheeler: 145, twoWheeler: 210 } },
+  { id: 'TC-2', name: 'FC Road', density: 60, status: 'Moderate', delay: '5 min', lastUpdatedMinutesAgo: 12, sourceBus: 'BUS-105', coordinates: [[73.8400, 18.5250], [73.8410, 18.5220], [73.8430, 18.5180], [73.8450, 18.5150], [73.8470, 18.5120], [73.8480, 18.5100]], vehicleStats: { heavy: 5, fourWheeler: 85, twoWheeler: 190 } },
+  { id: 'TC-3', name: 'JM Road', density: 30, status: 'Clear', delay: '0 min', lastUpdatedMinutesAgo: 45, sourceBus: 'BUS-108', coordinates: [[73.8500, 18.5300], [73.8510, 18.5270], [73.8530, 18.5230], [73.8550, 18.5200], [73.8555, 18.5170], [73.8560, 18.5150]], vehicleStats: { heavy: 2, fourWheeler: 40, twoWheeler: 80 } },
+  { id: 'TC-4', name: 'Swargate Junction', density: 95, status: 'Gridlock', delay: '25 min', lastUpdatedMinutesAgo: 2, sourceBus: 'BUS-201', coordinates: [[73.8585, 18.5010]], vehicleStats: { heavy: 45, fourWheeler: 210, twoWheeler: 350 }, bottleneckReason: 'Accident blocking two lanes and heavy water logging near the intersection.', proofImageUrl: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0be2?auto=format&fit=crop&q=80&w=800' },
+  { id: 'TC-5', name: 'Koregaon Park Road', density: 75, status: 'High Congestion', delay: '10 min', lastUpdatedMinutesAgo: 35, sourceBus: 'BUS-112', coordinates: [[73.8950, 18.5350]], vehicleStats: { heavy: 12, fourWheeler: 160, twoWheeler: 120 } },
+  { id: 'TC-6', name: 'Viman Nagar Highway', density: 45, status: 'Moderate', delay: '2 min', lastUpdatedMinutesAgo: 8, sourceBus: 'BUS-110', coordinates: [[73.9160, 18.5620]], vehicleStats: { heavy: 30, fourWheeler: 110, twoWheeler: 85 } },
+  { id: 'TC-7', name: 'Pune Station Road', density: 88, status: 'High Congestion', delay: '15 min', lastUpdatedMinutesAgo: 50, sourceBus: 'BUS-103', coordinates: [[73.8730, 18.5280]], vehicleStats: { heavy: 28, fourWheeler: 175, twoWheeler: 220 }, bottleneckReason: 'Unexpected road construction work taking up left lane.', proofImageUrl: '/public/Gemini_Generated_Image_acwufiacwufiacwu' },
+  { id: 'TC-8', name: 'Kothrud Stand Road', density: 55, status: 'Moderate', delay: '4 min', lastUpdatedMinutesAgo: 15, sourceBus: 'BUS-115', coordinates: [[73.8100, 18.5050]], vehicleStats: { heavy: 8, fourWheeler: 90, twoWheeler: 150 } },
 ];
 
 export const MOCK_VIOLATIONS = [
-  { id: 'V-102', type: 'Wrong Way', bus: 'ANPR-Unregistered', vehicleNo: 'MH 14 XY 9876', location: 'FC Road', longitude: 73.8420, latitude: 18.5220, time: '5 mins ago', severity: 'Critical', imageUrl: 'https://en.pimg.jp/114/682/637/1/114682637.jpg', croppedImageUrl: 'https://en.pimg.jp/114/682/637/1/114682637.jpg' },
-  { id: 'V-103', type: 'Hit and Run', bus: 'BUS-205', vehicleNo: 'MH 12 L 1934', location: 'MG Road Junction', longitude: 73.8760, latitude: 18.5130, time: '8 mins ago', severity: 'Critical', imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCy17wMVt-D51lrfJYqgZU7Mru74IRh3ll6irlw9Z8YA&s', croppedImageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCy17wMVt-D51lrfJYqgZU7Mru74IRh3ll6irlw9Z8YA&s' },
-  { id: 'V-107', type: 'Hit and Run', bus: 'Traffic Cam 2', vehicleNo: 'MH 12 QK 8822', location: 'Pune Station', longitude: 73.8730, latitude: 18.5280, time: '14 mins ago', severity: 'Critical', imageUrl: 'https://ewscripps.brightspotcdn.com/dims4/default/f028308/2147483647/strip/true/crop/4032x3024+0+0/resize/1280x960!/quality/90/?url=http:%2F%2Fewscripps-brightspot.s3.amazonaws.com%2Ffc%2F94%2F9cea0b3f4a8c8881396fded90763%2F82d-st-hit-and-run.jpeg', croppedImageUrl: 'https://ewscripps.brightspotcdn.com/dims4/default/f028308/2147483647/strip/true/crop/4032x3024+0+0/resize/1280x960!/quality/90/?url=http:%2F%2Fewscripps-brightspot.s3.amazonaws.com%2Ffc%2F94%2F9cea0b3f4a8c8881396fded90763%2F82d-st-hit-and-run.jpeg' },
-  { id: 'V-108', type: 'Lane Violation', bus: 'BUS-108', vehicleNo: 'MH 14 RZ 1199', location: 'Swargate', longitude: 73.8585, latitude: 18.5010, time: '22 mins ago', severity: 'High', imageUrl: 'https://tse3.mm.bing.net/th/id/OIP.BGDalyLzB05eC9CQCcjvLQHaE8?r=0&rs=1&pid=ImgDetMain&o=7&rm=3', croppedImageUrl: 'https://tse3.mm.bing.net/th/id/OIP.BGDalyLzB05eC9CQCcjvLQHaE8?r=0&rs=1&pid=ImgDetMain&o=7&rm=3' },
+  { id: 'V-102', type: 'Wrong Way', bus: 'ANPR-Unregistered', vehicleNo: 'MH 14 XY 9876', location: 'FC Road', longitude: 73.8420, latitude: 18.5220, time: '14:21', severity: 'Low', status: 'Verified', confidenceScore: 94.7, imageUrl: 'https://en.pimg.jp/114/682/637/1/114682637.jpg', croppedImageUrl: 'https://en.pimg.jp/114/682/637/1/114682637.jpg', anprImageUrl: 'https://tse2.mm.bing.net/th/id/OIP.j9aU7Qf1D9O_R-vG1wE7_QHaEK?rs=1&pid=ImgDetMain' },
+  { id: 'V-103', type: 'Hit and Run', bus: 'BUS-205', vehicleNo: 'MH 12 L 1934', location: 'MG Road Junction', longitude: 73.8760, latitude: 18.5130, time: '14:18', severity: 'Critical', status: 'Verified', confidenceScore: 89.5, imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCy17wMVt-D51lrfJYqgZU7Mru74IRh3ll6irlw9Z8YA&s', croppedImageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCy17wMVt-D51lrfJYqgZU7Mru74IRh3ll6irlw9Z8YA&s', anprImageUrl: 'https://tse2.mm.bing.net/th/id/OIP.j9aU7Qf1D9O_R-vG1wE7_QHaEK?rs=1&pid=ImgDetMain' },
+  { id: 'V-107', type: 'Hit and Run', bus: 'Traffic Cam 2', vehicleNo: 'MH 12 QK 8822', location: 'Pune Station', longitude: 73.8730, latitude: 18.5280, time: '14:12', severity: 'Critical', status: 'Unverified', confidenceScore: 91.2, imageUrl: 'https://ewscripps.brightspotcdn.com/dims4/default/f028308/2147483647/strip/true/crop/4032x3024+0+0/resize/1280x960!/quality/90/?url=http:%2F%2Fewscripps-brightspot.s3.amazonaws.com%2Ffc%2F94%2F9cea0b3f4a8c8881396fded90763%2F82d-st-hit-and-run.jpeg', croppedImageUrl: 'https://ewscripps.brightspotcdn.com/dims4/default/f028308/2147483647/strip/true/crop/4032x3024+0+0/resize/1280x960!/quality/90/?url=http:%2F%2Fewscripps-brightspot.s3.amazonaws.com%2Ffc%2F94%2F9cea0b3f4a8c8881396fded90763%2F82d-st-hit-and-run.jpeg', anprImageUrl: 'https://tse2.mm.bing.net/th/id/OIP.j9aU7Qf1D9O_R-vG1wE7_QHaEK?rs=1&pid=ImgDetMain' },
+  { id: 'V-108', type: 'Lane Violation', bus: 'BUS-108', vehicleNo: 'MH 14 RZ 1199', location: 'Swargate', longitude: 73.8585, latitude: 18.5010, time: '14:04', severity: 'High', status: 'Unverified', confidenceScore: 98.1, imageUrl: 'https://tse3.mm.bing.net/th/id/OIP.BGDalyLzB05eC9CQCcjvLQHaE8?r=0&rs=1&pid=ImgDetMain&o=7&rm=3', croppedImageUrl: 'https://tse3.mm.bing.net/th/id/OIP.BGDalyLzB05eC9CQCcjvLQHaE8?r=0&rs=1&pid=ImgDetMain&o=7&rm=3', anprImageUrl: 'https://tse2.mm.bing.net/th/id/OIP.j9aU7Qf1D9O_R-vG1wE7_QHaEK?rs=1&pid=ImgDetMain' },
 ];
 
 export const MOCK_ACTION_QUEUE = [
@@ -211,4 +213,22 @@ export const MOCK_CROWD_HOTSPOTS: CrowdHotspot[] = [
   { id: 'CH-8', name: 'Camp Area', longitude: 73.8750, latitude: 18.5150, density: 50, trend: 'stable', count: 300, lastUpdatedMinutesAgo: 5, sourceBus: 'BUS-202' },
   { id: 'CH-9', name: 'Kothrud Stand', longitude: 73.8100, latitude: 18.5050, density: 78, trend: 'increasing', count: 850, lastUpdatedMinutesAgo: 45, sourceBus: 'BUS-115' },
   { id: 'CH-10', name: 'Shivajinagar Station', longitude: 73.8450, latitude: 18.5300, density: 98, trend: 'stable', count: 2100, lastUpdatedMinutesAgo: 12, sourceBus: 'BUS-120' },
+];
+
+export interface ODFlow {
+  id: string;
+  origin: string;
+  destination: string;
+  volume: number;
+  peakTime: string;
+  trend: 'increasing' | 'decreasing' | 'stable';
+  primaryMode: 'Bus' | 'Private' | 'Mixed';
+}
+
+export const MOCK_OD_FLOWS: ODFlow[] = [
+  { id: 'OD-1', origin: 'Kothrud Stand', destination: 'Shivajinagar Station', volume: 4500, peakTime: '08:00 AM - 10:00 AM', trend: 'increasing', primaryMode: 'Mixed' },
+  { id: 'OD-2', origin: 'Swargate Junction', destination: 'Pune Station', volume: 3800, peakTime: '08:30 AM - 10:30 AM', trend: 'stable', primaryMode: 'Bus' },
+  { id: 'OD-3', origin: 'Viman Nagar', destination: 'Koregaon Park', volume: 2900, peakTime: '09:00 AM - 11:00 AM', trend: 'increasing', primaryMode: 'Private' },
+  { id: 'OD-4', origin: 'FC Road', destination: 'Camp Area', volume: 2100, peakTime: '05:00 PM - 07:00 PM', trend: 'decreasing', primaryMode: 'Mixed' },
+  { id: 'OD-5', origin: 'Wakad', destination: 'Hinjewadi IT Park', volume: 5200, peakTime: '08:00 AM - 10:30 AM', trend: 'increasing', primaryMode: 'Private' },
 ];

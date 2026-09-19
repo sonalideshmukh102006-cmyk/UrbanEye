@@ -9,6 +9,7 @@ export default function IncidentModal() {
 
   const [localStatus, setLocalStatus] = useState<string>('');
   const [showDispatchMenu, setShowDispatchMenu] = useState(false);
+  const [expandedImage, setExpandedImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (selectedIncident) {
@@ -74,8 +75,11 @@ export default function IncidentModal() {
           {/* Details */}
           <div className="w-full md:w-1/2 p-6 flex flex-col gap-4">
             <div>
-              <h3 className="text-2xl font-bold text-foreground mb-1">{selectedIncident.type || selectedIncident.description || 'Anomaly Detected'}</h3>
-              <p className="text-sm text-muted-foreground">Ticket ID: {selectedIncident.id}</p>
+              <h3 className="text-2xl font-bold text-foreground mb-1">{selectedIncident.type || 'Anomaly Detected'}</h3>
+              <p className="text-sm text-muted-foreground mb-2">Ticket ID: {selectedIncident.id} {selectedIncident.time && `• ${selectedIncident.time}`}</p>
+              {selectedIncident.description && (
+                <p className="text-sm text-foreground">{selectedIncident.description}</p>
+              )}
             </div>
 
             {selectedIncident.cameraQualityIssue && (
@@ -136,6 +140,24 @@ export default function IncidentModal() {
                </div>
             </div>
 
+            {selectedIncident.vehicleNo && selectedIncident.anprImageUrl && (
+              <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">ANPR / Number Plate Details</p>
+                <div className="flex gap-4 items-center">
+                  <img 
+                    src={selectedIncident.anprImageUrl} 
+                    alt="Number Plate" 
+                    className="w-24 h-12 object-cover rounded border border-border cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => setExpandedImage(selectedIncident.anprImageUrl)}
+                  />
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Detected Vehicle</p>
+                    <p className="text-lg font-bold text-foreground font-mono">{selectedIncident.vehicleNo}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {selectedIncident.signLanguage && (
               <div className="bg-blue-500/10 rounded-lg p-4 border border-blue-500/30">
                  <p className="text-xs text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-2 font-bold">Multilingual Signboard Details</p>
@@ -168,6 +190,28 @@ export default function IncidentModal() {
         </div>
 
       </div>
+
+      {/* Fullscreen Image Overlay */}
+      {expandedImage && (
+        <div 
+          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 cursor-pointer"
+          onClick={() => setExpandedImage(null)}
+        >
+          <div className="relative">
+            <button 
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 bg-black/50 p-2 rounded-full"
+              onClick={() => setExpandedImage(null)}
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <img 
+              src={expandedImage} 
+              alt="Enlarged view" 
+              className="max-w-full max-h-[85vh] rounded-lg shadow-2xl border border-white/20" 
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
