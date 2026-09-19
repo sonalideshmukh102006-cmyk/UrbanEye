@@ -354,19 +354,19 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
         >
           <Layer
             id="crowd-heat"
-            type="circle"
+            type="heatmap"
             paint={{
-              'circle-radius': ['interpolate', ['linear'], ['zoom'], 10, 20, 15, 60],
-              'circle-color': [
-                'step',
-                ['get', 'density'],
-                'rgba(34, 197, 94, 0.8)', // green for low density (< 50)
-                50, 'rgba(249, 115, 22, 0.8)', // orange for medium density (50 - 79)
-                80, 'rgba(239, 68, 68, 0.8)' // red for high density (>= 80)
+              'heatmap-weight': ['interpolate', ['linear'], ['get', 'density'], 0, 0, 100, 1],
+              'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 0, 1, 15, 3],
+              'heatmap-color': [
+                'interpolate', ['linear'], ['heatmap-density'],
+                0, 'rgba(34, 197, 94, 0)',
+                0.4, 'rgba(34, 197, 94, 0.8)',
+                0.7, 'rgba(249, 115, 22, 0.8)',
+                1, 'rgba(239, 68, 68, 1)'
               ],
-              'circle-blur': 0.2,
-              'circle-opacity': 0.85,
-              'circle-pitch-alignment': 'map'
+              'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 10, 15, 15, 40],
+              'heatmap-opacity': 0.85
             }}
           />
         </Source>

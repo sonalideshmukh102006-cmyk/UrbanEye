@@ -1,11 +1,43 @@
-import { ArrowLeft, Search, Filter, Shield, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Search, Filter, Shield, AlertTriangle, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { MOCK_VIOLATIONS } from '../data/mockData';
 import { useStore } from '../store/useStore';
 
 export default function AllReports() {
   const navigate = useNavigate();
   const { setSelectedIncident } = useStore();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [severityFilter, setSeverityFilter] = useState('All');
+
+  const filteredViolations = MOCK_VIOLATIONS.filter((violation) => {
+    const matchesSearch = 
+      violation.id.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      violation.vehicleNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      violation.location.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSeverity = severityFilter === 'All' || violation.severity === severityFilter;
+    return matchesSearch && matchesSeverity;
+  });
+
+  const exportToCSV = () => {
+    const headers = ['Ticket ID', 'Time & Date', 'Violation Type', 'Severity', 'Vehicle No', 'Location', 'Source Cam'];
+    const csvContent = [
+      headers.join(','),
+      ...filteredViolations.map(v => 
+        `"${v.id}","${v.time}","${v.type}","${v.severity}","${v.vehicleNo}","${v.location}","${v.bus}"`
+      )
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'all_driving_reports.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
@@ -33,12 +65,31 @@ export default function AllReports() {
             <Search className="w-4 h-4 text-muted-foreground mr-2" />
             <input 
               type="text" 
-              placeholder="Search Vehicle No or ID..." 
+              placeholder="Search Vehicle, ID, Location..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="bg-transparent border-none outline-none text-sm text-foreground w-full placeholder:text-muted-foreground"
             />
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-background border border-border hover:bg-muted rounded-lg text-sm font-bold text-foreground transition-colors shadow-sm">
-            <Filter className="w-4 h-4" /> Filter
+          <div className="flex items-center bg-background border border-border rounded-lg px-3 py-2 shadow-sm">
+            <Filter className="w-4 h-4 text-muted-foreground mr-2" />
+            <select
+              value={severityFilter}
+              onChange={(e) => setSeverityFilter(e.target.value)}
+              className="bg-transparent border-none outline-none text-sm text-foreground font-medium cursor-pointer"
+            >
+              <option value="All">All Severities</option>
+              <option value="Critical">Critical</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+          <button 
+            onClick={exportToCSV}
+            className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 rounded-lg text-sm font-bold text-primary-foreground transition-colors shadow-sm"
+          >
+            <Download className="w-4 h-4" /> Export CSV
           </button>
         </div>
       </div>
@@ -58,7 +109,7 @@ export default function AllReports() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {MOCK_VIOLATIONS.map((violation) => (
+              {filteredViolations.map((violation) => (
                 <tr 
                   key={violation.id} 
                   onClick={() => setSelectedIncident(violation)} 
