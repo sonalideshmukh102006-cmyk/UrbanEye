@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useStore } from '../store/useStore';
 import { MOCK_BUSES, MOCK_INCIDENTS, MOCK_TRAFFIC_CORRIDORS, MOCK_CROWD_HOTSPOTS, MOCK_VIOLATIONS } from '../data/mockData';
-import { Bus, AlertTriangle, AlertCircle, Info, Maximize2, Search, ArrowLeft, Layers, Zap, Car, MapPin, LocateFixed, Users, Droplets, CircleDot } from 'lucide-react';
+import { Bus, AlertTriangle, AlertCircle, Info, Maximize2, Search, ArrowLeft, Layers, Zap, Car, MapPin, LocateFixed, Users, Droplets, CircleDot, Octagon, AlignJustify, Columns } from 'lucide-react';
 
 const OSM_STYLE = {
   version: 8,
@@ -118,6 +118,28 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
       );
     }
     
+    if (type === 'MissingSign') {
+      return (
+        <div className="bg-red-950 text-red-400 p-1.5 rounded-full shadow-lg border-2 border-red-700">
+          <Octagon className="w-5 h-5" />
+        </div>
+      );
+    }
+    if (type === 'MissingZebraCrossing') {
+      return (
+        <div className="bg-gray-900 text-gray-300 p-1.5 rounded-full shadow-lg border-2 border-gray-600">
+          <AlignJustify className="w-5 h-5" />
+        </div>
+      );
+    }
+    if (type === 'BrokenDivider') {
+      return (
+        <div className="bg-amber-950 text-amber-400 p-1.5 rounded-full shadow-lg border-2 border-amber-700">
+          <Columns className="w-5 h-5" />
+        </div>
+      );
+    }
+
     switch (severity) {
       case 'Critical': return <AlertTriangle className="w-6 h-6 text-red-500 fill-red-500/20 animate-pulse" />;
       case 'High': return <AlertCircle className="w-5 h-5 text-orange-500 fill-orange-500/20" />;
@@ -203,7 +225,7 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
         {!isFullscreen && (
           <button 
             onClick={() => navigate('/map')}
-            className="p-2 bg-card text-foreground rounded-lg shadow-lg border border-border hover:bg-muted transition-colors"
+            className="p-2 bg-card text-foreground rounded-lg shadow-lg border border-border hover:bg-muted transition-colors bg-white"
             title="Open Fullscreen Map"
           >
             <Maximize2 className="w-5 h-5 text-gray-700" />
@@ -217,6 +239,19 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
           <LocateFixed className="w-5 h-5 text-blue-600" />
         </button>
       </div>
+
+      {mapLayers.vehicleDensity && (
+        <div className="absolute bottom-8 left-4 z-10 bg-white p-3 rounded-xl shadow-lg border border-gray-200 pointer-events-auto animate-in fade-in slide-in-from-bottom-4">
+          <h4 className="text-xs font-bold text-gray-800 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+            <Car className="w-3.5 h-3.5 text-gray-500" /> Vehicle Density
+          </h4>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2"><div className="w-4 h-1.5 rounded bg-[#22c55e]"></div><span className="text-xs text-gray-600 font-medium">Low Traffic (&lt;50%)</span></div>
+            <div className="flex items-center gap-2"><div className="w-4 h-1.5 rounded bg-[#f97316]"></div><span className="text-xs text-gray-600 font-medium">Medium Traffic (50-80%)</span></div>
+            <div className="flex items-center gap-2"><div className="w-4 h-1.5 rounded bg-[#ef4444]"></div><span className="text-xs text-gray-600 font-medium">High / Gridlock (&gt;80%)</span></div>
+          </div>
+        </div>
+      )}
 
       <Map
         ref={mapRef}

@@ -107,6 +107,7 @@ export default function SidebarLeft() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {MOCK_TRAFFIC_CORRIDORS
             .filter(c => c.density > 85 || c.status === 'Gridlock')
+            .sort((a, b) => parseInt(b.delay) - parseInt(a.delay))
             .slice(0, 2)
             .map(c => (
               <div

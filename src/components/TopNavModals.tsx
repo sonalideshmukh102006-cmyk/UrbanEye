@@ -198,6 +198,7 @@ export default function TopNavModals() {
                 <button 
                   onClick={() => {
                     setInvestigationIncident(null);
+                    setShowCriticalAlertsModal(true);
                   }}
                   className="p-1 hover:bg-black/5 rounded transition-colors text-gray-600"
                 >
@@ -209,7 +210,10 @@ export default function TopNavModals() {
                 </div>
               </div>
               <button 
-                onClick={() => setInvestigationIncident(null)}
+                onClick={() => {
+                  setInvestigationIncident(null);
+                  setShowCriticalAlertsModal(true);
+                }}
                 className="p-2 rounded-full hover:bg-black/5 transition-colors text-gray-600"
               >
                 <X className="w-5 h-5" />
