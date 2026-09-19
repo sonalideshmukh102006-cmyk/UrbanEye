@@ -166,14 +166,14 @@ export const useStore = create<DashboardState>((set) => ({
 
   mapLayers: {
     vehicleDensity: false,
-    liveFleet: true,
+    liveFleet: false,
     crowdDensity: false,
     infrastructure: false,
-    defectRadar: true,
-    emergency: true,
-    vehicleAlerts: true,
+    defectRadar: false,
+    emergency: false,
+    vehicleAlerts: false,
     liveBottlenecks: false,
-    pedestrianSafety: true,
+    pedestrianSafety: false,
   },
   toggleMapLayer: (layer) => set((state) => ({
     mapLayers: {

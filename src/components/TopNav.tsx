@@ -2,7 +2,7 @@ import { Bus, Activity, AlertTriangle, Radio } from 'lucide-react';
 import { useStore } from '../store/useStore';
 
 export default function TopNav() {
-  const { 
+  const {
     activeBuses, cityHealth, criticalAlerts, isServerConnected,
     setShowFleetModal, setShowCriticalAlertsModal, setShowCityHealthModal
   } = useStore();
@@ -18,13 +18,12 @@ export default function TopNav() {
         </div>
 
         {/* Live Server Ingest Status Indicator */}
-        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border transition-colors ${
-          isServerConnected 
-            ? 'bg-emerald-50 text-emerald-700 border-emerald-300' 
+        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border transition-colors ${isServerConnected
+            ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
             : 'bg-amber-50 text-amber-700 border-amber-300'
-        }`}>
+          }`}>
           <Radio className={`w-3.5 h-3.5 ${isServerConnected ? 'animate-pulse text-emerald-600' : 'text-amber-600'}`} />
-          <span>{isServerConnected ? 'Live Edge Connected' : 'Simulator Idle / Disconnected'}</span>
+          <span>{isServerConnected ? 'Live Edge Connected' : 'Protoype - Seeded Data'}</span>
         </div>
       </div>
 

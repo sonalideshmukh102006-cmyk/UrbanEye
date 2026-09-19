@@ -1,6 +1,6 @@
 import { MapPin, ShieldAlert, AlertTriangle, Camera, Waves, AlertCircle, Baseline, Navigation, Columns, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { MOCK_INCIDENTS } from '../data/mockData';
+import { MOCK_INCIDENTS, MOCK_VIOLATIONS } from '../data/mockData';
 import { useStore } from '../store/useStore';
 
 export default function SidebarRight() {
@@ -146,22 +146,36 @@ export default function SidebarRight() {
         </div>
       </div>
       
-      {/* Action Center & Vehicle Alerts Quick Links at the bottom */}
-      <div className="flex gap-2 p-4 border-t border-gray-200 bg-[#FFF9F2] sticky bottom-0 shrink-0 z-10">
-        <button 
-          onClick={() => window.open('/action-center', '_blank')}
-          className="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-3 px-2 rounded-xl flex flex-col items-center justify-center gap-1.5 hover:bg-blue-100 transition-colors shadow-sm text-center border border-blue-200"
-        >
-          <Shield className="w-5 h-5" />
-          <span>Action Center &<br/>AI Triage</span>
-        </button>
+      {/* Vehicle Alerts Quick Links at the bottom */}
+      <div className="flex gap-3 p-3 border-t border-orange-200/50 bg-gradient-to-b from-[#FFF9F2] to-orange-50/30 sticky bottom-0 shrink-0 z-10">
         <button 
           onClick={() => window.open('/vehicle-alerts', '_blank')}
-          className="flex-1 bg-orange-50 text-orange-700 text-xs font-bold py-3 px-2 rounded-xl flex flex-col items-center justify-center gap-1.5 hover:bg-orange-100 transition-colors shadow-sm text-center border border-orange-200"
+          className="w-1/3 bg-gradient-to-br from-orange-50 to-orange-100 text-orange-700 text-[11px] sm:text-xs font-black py-3 px-2 rounded-xl flex flex-col items-center justify-center gap-2 hover:from-orange-100 hover:to-orange-200 transition-all shadow-sm text-center border border-orange-200 shrink-0 group relative overflow-hidden"
         >
-          <AlertCircle className="w-5 h-5" />
-          <span>Vehicle<br/>Emergency Alerts</span>
+          <div className="absolute inset-0 bg-orange-500/10 scale-0 group-hover:scale-150 rounded-full transition-transform duration-500 ease-out"></div>
+          <AlertCircle className="w-7 h-7 text-orange-600 group-hover:scale-110 transition-transform relative z-10" />
+          <span className="relative z-10 leading-tight">VEHICLE<br/>ALERTS</span>
         </button>
+        <div className="w-2/3 flex flex-col gap-2 overflow-hidden justify-between">
+          {MOCK_VIOLATIONS.slice(0, 3).map((v, idx) => (
+            <div 
+              key={idx} 
+              className="bg-white border border-orange-100/80 rounded-lg p-2.5 flex items-center justify-between shadow-sm cursor-pointer hover:bg-orange-50 transition-colors group"
+              onClick={() => { flyTo(v.longitude, v.latitude, 16); setSelectedIncident(v); }}
+            >
+               <div className="flex items-center gap-2.5 overflow-hidden">
+                 <div className={`w-2 h-2 rounded-full shrink-0 ${v.severity === 'Critical' ? 'bg-red-500 animate-pulse' : 'bg-orange-500'}`}></div>
+                 <div className="flex flex-col overflow-hidden gap-0.5">
+                   <span className="text-xs font-bold text-gray-800 truncate group-hover:text-orange-700 transition-colors">{v.type}</span>
+                   <span className="text-[10px] text-gray-500 truncate">{v.vehicleNo}</span>
+                 </div>
+               </div>
+               <span className={`text-[10px] px-2 py-1 rounded-md font-bold shrink-0 ${v.severity === 'Critical' ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-orange-50 text-orange-600 border border-orange-100'}`}>
+                 {v.time}
+               </span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
