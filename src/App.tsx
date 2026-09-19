@@ -1,5 +1,5 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useStore } from './store/useStore';
 import TopNav from './components/TopNav';
 import DashboardHome from './pages/DashboardHome';
 import FullscreenMap from './pages/FullscreenMap';
@@ -10,10 +10,16 @@ import CorridorStatsModal from './components/CorridorStatsModal';
 import TopNavModals from './components/TopNavModals';
 import ActionCenter from './components/ActionCenter';
 import VehicleEmergencyAlertsPanel from './components/VehicleEmergencyAlertsPanel';
+import { telemetryWS } from './services/websocket';
 
 function App() {
-  // Dark mode removed
-
+  useEffect(() => {
+    // Initiate WebSocket connection to Central Ingest Server
+    telemetryWS.connect();
+    return () => {
+      telemetryWS.disconnect();
+    };
+  }, []);
 
   return (
     <BrowserRouter>

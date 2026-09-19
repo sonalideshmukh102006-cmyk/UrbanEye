@@ -29,9 +29,10 @@ const OSM_STYLE = {
 };
 
 export default function MapArea({ isFullscreen = false }: { isFullscreen?: boolean }) {
-  const { theme, mapViewport, onMapMove, setSelectedIncident, setSelectedCorridor, mapLayers, toggleMapLayer } = useStore();
+  const { theme, mapViewport, onMapMove, setSelectedIncident, setSelectedCorridor, mapLayers, toggleMapLayer, liveBuses, liveEvents } = useStore();
   const navigate = useNavigate();
   const mapRef = useRef<MapRef>(null);
+
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
@@ -230,7 +231,7 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
       >
         <NavigationControl position="bottom-right" />
 
-        {mapLayers.liveFleet && MOCK_BUSES.map(bus => (
+        {mapLayers.liveFleet && liveBuses.map(bus => (
           <Marker key={bus.id} longitude={bus.longitude} latitude={bus.latitude} anchor="bottom">
             <div className="flex flex-col items-center">
               <div className={`px-2 py-0.5 rounded text-[10px] font-bold shadow-md mb-1 ${
@@ -246,7 +247,7 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
           </Marker>
         ))}
 
-        {MOCK_INCIDENTS.map(incident => {
+        {liveEvents.map(incident => {
           const isInfra = ['MissingSign', 'MissingZebraCrossing', 'BrokenDivider'].includes(incident.type);
           const isDefect = ['Pothole', 'WaterLogging'].includes(incident.type);
           const isEmergency = ['FallenTree', 'RoadCaveIn', 'Crash'].includes(incident.type);
