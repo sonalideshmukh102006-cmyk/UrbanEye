@@ -2,7 +2,7 @@ import { useStore } from '../store/useStore';
 
 class TelemetryWebSocketClient {
   private ws: WebSocket | null = null;
-  private url: string = 'ws://localhost:8000/ws/telemetry';
+  private url: string = import.meta.env.VITE_WS_URL || 'ws://localhost:8000/ws/telemetry';
   private reconnectInterval: number = 3000;
   private isConnected: boolean = false;
 
