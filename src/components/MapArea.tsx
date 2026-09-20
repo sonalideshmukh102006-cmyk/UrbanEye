@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import Map, { Marker, NavigationControl, Source, Layer } from 'react-map-gl/maplibre';
+import maplibregl from 'maplibre-gl';
 import type { MapRef } from 'react-map-gl/maplibre';
 import { useNavigate } from 'react-router-dom';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -256,6 +257,7 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
 
       <Map
         ref={mapRef}
+        mapLib={maplibregl}
         {...mapViewport}
         onMove={evt => onMapMove(evt.viewState)}
         onClick={handleMapClick}
