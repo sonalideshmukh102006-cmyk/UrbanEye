@@ -58,6 +58,21 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
   const [globalSearchResults, setGlobalSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
+  // DEBUG LOGGER
+  useEffect(() => {
+    const log = (msg: string) => {
+      const el = document.getElementById('debug-log-content');
+      if (el) {
+        el.innerHTML += `<div>[${new Date().toISOString().split('T')[1].slice(0,-1)}] ${msg}</div>`;
+        el.parentElement?.scrollTo(0, el.scrollHeight);
+      }
+    };
+    (window as any).addMapLog = log;
+    
+    log(`Init: mapLayers.vehicleDensity = ${mapLayers.vehicleDensity}`);
+    log(`Init: mapLayers.crowdDensity = ${mapLayers.crowdDensity}`);
+  }, [mapLayers]);
+
   useEffect(() => {
     if (searchQuery.trim().length < 3) {
       setGlobalSearchResults([]);
@@ -261,6 +276,13 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
         {...mapViewport}
         onMove={evt => onMapMove(evt.viewState)}
         onClick={handleMapClick}
+        onError={e => {
+          if ((window as any).addMapLog) (window as any).addMapLog(`MapError: ${e.error?.message || e.error}`);
+          console.error('MapError', e);
+        }}
+        onLoad={() => {
+          if ((window as any).addMapLog) (window as any).addMapLog(`Map Loaded successfully`);
+        }}
         interactiveLayerIds={interactiveLayerIds}
         mapStyle={OSM_STYLE as any}
         attributionControl={false}
@@ -441,6 +463,18 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
           ))
         }
       </Map>
+      
+      {/* ON-SCREEN DEBUGGER FOR VERCEL PRODUCTION */}
+      <div className="absolute bottom-0 right-0 w-80 h-48 bg-black/80 text-green-400 font-mono text-[10px] overflow-y-auto p-2 pointer-events-auto z-[9999]" id="prod-debugger">
+        <div className="font-bold text-white mb-1 border-b border-gray-700 pb-1 flex justify-between">
+          <span>DEBUG LOGS (Vercel)</span>
+          <button onClick={() => {
+            const el = document.getElementById('debug-log-content');
+            if (el) el.innerHTML = '';
+          }} className="text-gray-400 hover:text-white">Clear</button>
+        </div>
+        <div id="debug-log-content" className="flex flex-col gap-1 whitespace-pre-wrap"></div>
+      </div>
     </div>
   );
 }
