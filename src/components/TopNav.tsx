@@ -1,5 +1,6 @@
 import { Bus, Activity, AlertTriangle, Radio } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import logoImage from '../../public/11.png';
 
 export default function TopNav() {
   const {
@@ -11,7 +12,7 @@ export default function TopNav() {
     <header className="h-16 flex items-center justify-between px-6 bg-white border-b border-blue-200 shadow-sm z-10">
       <div className="flex items-center gap-3">
         <div className="w-12 h-12 rounded-lg bg-gray-900 flex items-center justify-center shadow-md overflow-hidden border border-cyan-800/50">
-          <img src="/11.png" alt="Sahasrāksha Logo" className="w-full h-full object-contain" />
+          <img src={logoImage} alt="Sahasrāksha Logo" className="w-full h-full object-contain" />
         </div>
         <div className="flex flex-col justify-center ml-3 mt-1">
           <h1 className="text-2xl sm:text-3xl font-black tracking-[0.15em] text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-blue-900 to-slate-800 leading-none drop-shadow-sm uppercase" style={{ fontFamily: "'Orbitron', sans-serif" }}>
