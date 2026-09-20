@@ -1,4 +1,4 @@
-import { X, Bus, AlertTriangle, Eye, ShieldAlert, Clock, ArrowLeft, Camera, CheckCircle2, CheckCircle, Activity } from 'lucide-react';
+import { X, Bus, AlertTriangle, ShieldAlert, Clock, ArrowLeft, Camera, CheckCircle2, CheckCircle, Activity } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { MOCK_BUSES, MOCK_INCIDENTS } from '../data/mockData';
 
@@ -6,7 +6,6 @@ export default function TopNavModals() {
   const { 
     showFleetModal, setShowFleetModal, 
     showCriticalAlertsModal, setShowCriticalAlertsModal,
-    showFleetOnMap, setShowFleetOnMap,
     investigationIncident, setInvestigationIncident,
     setSelectedIncident,
     flyTo,
@@ -14,10 +13,6 @@ export default function TopNavModals() {
   } = useStore();
 
   const criticalAlerts = MOCK_INCIDENTS.filter(i => i.severity === 'Critical');
-
-  const handleShowFleetOnMap = () => {
-    setShowFleetOnMap(!showFleetOnMap);
-  };
 
   return (
     <>
@@ -64,7 +59,6 @@ export default function TopNavModals() {
                       <button 
                         onClick={() => {
                           flyTo(bus.longitude, bus.latitude, 16);
-                          setShowFleetOnMap(true);
                           setShowFleetModal(false);
                         }}
                         className="text-xs font-bold text-blue-500 bg-blue-500/10 hover:bg-blue-500/20 px-3 py-1.5 rounded-md transition-colors w-full"
