@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import Map, { Marker, NavigationControl, Source, Layer } from 'react-map-gl/maplibre';
+import Map, { Marker, NavigationControl } from 'react-map-gl/maplibre';
 import * as maplibregl from 'maplibre-gl';
 import type { MapRef } from 'react-map-gl/maplibre';
 import { useNavigate } from 'react-router-dom';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useStore } from '../store/useStore';
 import { MOCK_BUSES, MOCK_INCIDENTS, MOCK_TRAFFIC_CORRIDORS, MOCK_CROWD_HOTSPOTS, MOCK_VIOLATIONS } from '../data/mockData';
-import { Bus, AlertTriangle, AlertCircle, Info, Maximize2, Search, ArrowLeft, Layers, Zap, Car, MapPin, LocateFixed, Users, Droplets, CircleDot, Octagon, AlignJustify, Columns } from 'lucide-react';
+import { Bus, AlertTriangle, AlertCircle, Info, Maximize2, Search, ArrowLeft, Zap, Car, MapPin, LocateFixed, Users, Droplets, CircleDot, Octagon, AlignJustify, Columns } from 'lucide-react';
 
 const OSM_STYLE = {
   version: 8,
@@ -57,35 +57,103 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
 
   const [globalSearchResults, setGlobalSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
-  // DEBUG LOGGER
+  // Imperatively manage vehicle density + crowd density layers via native MapLibre API
+  // This bypasses React Source/Layer wrappers which can silently fail in production builds
   useEffect(() => {
-    const log = (msg: string) => {
-      const el = document.getElementById('debug-log-content');
-      if (el) {
-        el.innerHTML += `<div>[${new Date().toISOString().split('T')[1].slice(0,-1)}] ${msg}</div>`;
-        el.parentElement?.scrollTo(0, el.scrollHeight);
-      }
+    if (!mapLoaded || !mapRef.current) return;
+    const map = mapRef.current.getMap() as any;
+    if (!map) return;
+
+    const CORRIDOR_SOURCE_PREFIX = 'native-corridor-';
+    const CROWD_SOURCE_ID = 'native-crowd';
+
+    const removeNativeLayers = () => {
+      MOCK_TRAFFIC_CORRIDORS.forEach(c => {
+        [`native-outline-${c.id}`, `native-layer-${c.id}`].forEach(lid => {
+          if (map.getLayer(lid)) map.removeLayer(lid);
+        });
+        const sid = `${CORRIDOR_SOURCE_PREFIX}${c.id}`;
+        if (map.getSource(sid)) map.removeSource(sid);
+      });
+      if (map.getLayer('native-crowd-heat')) map.removeLayer('native-crowd-heat');
+      if (map.getSource(CROWD_SOURCE_ID)) map.removeSource(CROWD_SOURCE_ID);
     };
-    (window as any).addMapLog = log;
-    
-    log(`Init: mapLayers.vehicleDensity = ${mapLayers.vehicleDensity}`);
-    log(`Init: mapLayers.crowdDensity = ${mapLayers.crowdDensity}`);
-    
-    // Check if the layers actually exist in the map engine
-    setTimeout(() => {
-      if (mapRef.current) {
-        const map = mapRef.current.getMap();
-        if (map) {
-          const style = map.getStyle();
-          if (style && style.layers) {
-            const layerIds = style.layers.map(l => l.id);
-            log(`Active Map Layers: ${layerIds.filter(id => id.includes('layer-TC-') || id.includes('crowd')).join(', ') || 'NONE FOUND'}`);
-          }
+
+    removeNativeLayers();
+
+    if (mapLayers.vehicleDensity) {
+      MOCK_TRAFFIC_CORRIDORS.forEach(c => {
+        const color = c.density > 80 ? '#ef4444' : c.density > 50 ? '#f97316' : '#22c55e';
+        const sid = `${CORRIDOR_SOURCE_PREFIX}${c.id}`;
+        if (!map.getSource(sid)) {
+          map.addSource(sid, {
+            type: 'geojson',
+            data: {
+              type: 'Feature',
+              properties: {},
+              geometry: { type: 'LineString', coordinates: c.coordinates }
+            }
+          });
         }
+        if (!map.getLayer(`native-outline-${c.id}`)) {
+          map.addLayer({
+            id: `native-outline-${c.id}`,
+            type: 'line',
+            source: sid,
+            layout: { 'line-cap': 'round', 'line-join': 'round' },
+            paint: { 'line-color': '#ffffff', 'line-width': 10, 'line-opacity': 0.7 }
+          });
+        }
+        if (!map.getLayer(`native-layer-${c.id}`)) {
+          map.addLayer({
+            id: `native-layer-${c.id}`,
+            type: 'line',
+            source: sid,
+            layout: { 'line-cap': 'round', 'line-join': 'round' },
+            paint: { 'line-color': color, 'line-width': 6, 'line-opacity': 1 }
+          });
+        }
+      });
+    }
+
+    if (mapLayers.crowdDensity) {
+      if (!map.getSource(CROWD_SOURCE_ID)) {
+        map.addSource(CROWD_SOURCE_ID, {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features: MOCK_CROWD_HOTSPOTS.map(h => ({
+              type: 'Feature',
+              properties: { density: h.density },
+              geometry: { type: 'Point', coordinates: [h.longitude, h.latitude] }
+            }))
+          }
+        });
       }
-    }, 1000);
-  }, [mapLayers]);
+      if (!map.getLayer('native-crowd-heat')) {
+        map.addLayer({
+          id: 'native-crowd-heat',
+          type: 'heatmap',
+          source: CROWD_SOURCE_ID,
+          paint: {
+            'heatmap-weight': ['interpolate', ['linear'], ['get', 'density'], 0, 0, 100, 1],
+            'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 0, 1, 15, 3],
+            'heatmap-color': [
+              'interpolate', ['linear'], ['heatmap-density'],
+              0, 'rgba(34,197,94,0)',
+              0.4, 'rgba(34,197,94,0.8)',
+              0.7, 'rgba(249,115,22,0.8)',
+              1, 'rgba(239,68,68,1)'
+            ],
+            'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 10, 15, 15, 40],
+            'heatmap-opacity': 0.85
+          }
+        });
+      }
+    }
+  }, [mapLoaded, mapLayers.vehicleDensity, mapLayers.crowdDensity]);
 
   useEffect(() => {
     if (searchQuery.trim().length < 3) {
@@ -290,13 +358,7 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
         {...mapViewport}
         onMove={evt => onMapMove(evt.viewState)}
         onClick={handleMapClick}
-        onError={e => {
-          if ((window as any).addMapLog) (window as any).addMapLog(`MapError: ${e.error?.message || e.error}`);
-          console.error('MapError', e);
-        }}
-        onLoad={() => {
-          if ((window as any).addMapLog) (window as any).addMapLog(`Map Loaded successfully`);
-        }}
+        onLoad={() => setMapLoaded(true)}
         interactiveLayerIds={interactiveLayerIds}
         mapStyle={OSM_STYLE as any}
         attributionControl={false}
@@ -362,88 +424,7 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
           ) : null
         ))}
 
-        {/* Traffic Corridors */}
-        {mapLayers.vehicleDensity && MOCK_TRAFFIC_CORRIDORS.map(corridor => {
-          const color = corridor.density > 80 ? '#ef4444' : corridor.density > 50 ? '#f97316' : '#22c55e';
-          return (
-            <Source 
-              key={corridor.id} 
-              id={corridor.id} 
-              type="geojson" 
-              data={{
-                type: 'Feature',
-                properties: {},
-                geometry: {
-                  type: 'LineString',
-                  coordinates: corridor.coordinates
-                }
-              }}
-            >
-              {/* Outline Layer for better visibility against light map */}
-              <Layer 
-                id={`layer-outline-${corridor.id}`}
-                type="line"
-                layout={{
-                  'line-cap': 'round',
-                  'line-join': 'round'
-                }}
-                paint={{
-                  'line-color': '#ffffff',
-                  'line-width': 10,
-                  'line-opacity': 0.7
-                }}
-              />
-              {/* Core Route Layer */}
-              <Layer 
-                id={`layer-${corridor.id}`}
-                type="line"
-                layout={{
-                  'line-cap': 'round',
-                  'line-join': 'round'
-                }}
-                paint={{
-                  'line-color': color,
-                  'line-width': 6,
-                  'line-opacity': 1
-                }}
-              />
-            </Source>
-          );
-        })}
-
-        {/* Crowd Density Heatmap Layer */}
-        {mapLayers.crowdDensity && (
-          <Source
-            id="crowd-hotspots"
-          type="geojson"
-          data={{
-            type: 'FeatureCollection',
-            features: MOCK_CROWD_HOTSPOTS.map(h => ({
-              type: 'Feature',
-              properties: { density: h.density, name: h.name },
-              geometry: { type: 'Point', coordinates: [h.longitude, h.latitude] }
-            }))
-          }}
-        >
-          <Layer
-            id="crowd-heat"
-            type="heatmap"
-            paint={{
-              'heatmap-weight': ['interpolate', ['linear'], ['get', 'density'], 0, 0, 100, 1],
-              'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 0, 1, 15, 3],
-              'heatmap-color': [
-                'interpolate', ['linear'], ['heatmap-density'],
-                0, 'rgba(34, 197, 94, 0)',
-                0.4, 'rgba(34, 197, 94, 0.8)',
-                0.7, 'rgba(249, 115, 22, 0.8)',
-                1, 'rgba(239, 68, 68, 1)'
-              ],
-              'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 10, 15, 15, 40],
-              'heatmap-opacity': 0.85
-            }}
-          />
-        </Source>
-        )}
+        {/* Vehicle Density and Crowd Density are managed imperatively via useEffect above */}
 
         {/* Live Bottlenecks Layer */}
         {mapLayers.liveBottlenecks && MOCK_TRAFFIC_CORRIDORS
@@ -477,18 +458,6 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
           ))
         }
       </Map>
-      
-      {/* ON-SCREEN DEBUGGER FOR VERCEL PRODUCTION */}
-      <div className="absolute bottom-0 right-0 w-80 h-48 bg-black/80 text-green-400 font-mono text-[10px] overflow-y-auto p-2 pointer-events-auto z-[9999]" id="prod-debugger">
-        <div className="font-bold text-white mb-1 border-b border-gray-700 pb-1 flex justify-between">
-          <span>DEBUG LOGS (Vercel)</span>
-          <button onClick={() => {
-            const el = document.getElementById('debug-log-content');
-            if (el) el.innerHTML = '';
-          }} className="text-gray-400 hover:text-white">Clear</button>
-        </div>
-        <div id="debug-log-content" className="flex flex-col gap-1 whitespace-pre-wrap"></div>
-      </div>
     </div>
   );
 }
