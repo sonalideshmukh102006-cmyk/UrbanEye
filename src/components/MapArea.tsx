@@ -71,6 +71,20 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
     
     log(`Init: mapLayers.vehicleDensity = ${mapLayers.vehicleDensity}`);
     log(`Init: mapLayers.crowdDensity = ${mapLayers.crowdDensity}`);
+    
+    // Check if the layers actually exist in the map engine
+    setTimeout(() => {
+      if (mapRef.current) {
+        const map = mapRef.current.getMap();
+        if (map) {
+          const style = map.getStyle();
+          if (style && style.layers) {
+            const layerIds = style.layers.map(l => l.id);
+            log(`Active Map Layers: ${layerIds.filter(id => id.includes('layer-TC-') || id.includes('crowd')).join(', ') || 'NONE FOUND'}`);
+          }
+        }
+      }
+    }, 1000);
   }, [mapLayers]);
 
   useEffect(() => {
