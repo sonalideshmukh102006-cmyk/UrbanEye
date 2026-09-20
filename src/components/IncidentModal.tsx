@@ -122,7 +122,13 @@ export default function IncidentModal() {
                 </div>
                 <p className={`font-bold flex items-center gap-1 ${['Verified', 'Resolved'].includes(localStatus) ? 'text-green-600 dark:text-green-400' : 'text-foreground'}`}>
                   {['Verified', 'Resolved'].includes(localStatus) && <CheckCircle2 className="w-4 h-4" />}
-                  {localStatus}
+                  {localStatus === 'Unverified' ? 'Detected (Unverified)' : localStatus === 'Verified' ? 'Multi-Bus Verified' : localStatus}
+                </p>
+                <p className="text-[10px] text-muted-foreground mt-1 leading-tight">
+                  {localStatus === 'Unverified' && 'Single bus AI detection. Pending fleet consensus.'}
+                  {localStatus === 'Verified' && 'Consensus reached by multiple buses.'}
+                  {localStatus === 'Assigned' && 'Dispatched to relevant municipal authority.'}
+                  {localStatus === 'Resolved' && 'Defect repaired and verified closed.'}
                 </p>
               </div>
             </div>

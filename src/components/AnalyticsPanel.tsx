@@ -75,10 +75,10 @@ export default function AnalyticsPanel() {
     });
 
     const slaData = [
-      { name: 'Resolved', value: statusCount.Resolved, color: '#10b981' }, // emerald-500
-      { name: 'Verified', value: statusCount.Verified, color: '#3b82f6' }, // blue-500
-      { name: 'Assigned', value: statusCount.Assigned, color: '#f59e0b' }, // amber-500
-      { name: 'Unverified', value: statusCount.Unverified, color: '#ef4444' } // red-500
+      { name: 'Resolved (Fixed)', value: statusCount.Resolved, color: '#10b981' }, // emerald-500
+      { name: 'Multi-Bus Verified', value: statusCount.Verified, color: '#3b82f6' }, // blue-500
+      { name: 'Assigned to City', value: statusCount.Assigned, color: '#f59e0b' }, // amber-500
+      { name: 'AI Detected (Unverified)', value: statusCount.Unverified, color: '#ef4444' } // red-500
     ].filter(item => item.value > 0);
 
     // E. Ward-wise Infrastructure Health (Radar Chart)
