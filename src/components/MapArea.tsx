@@ -103,7 +103,11 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
             type: 'line',
             source: sid,
             layout: { 'line-cap': 'round', 'line-join': 'round' },
-            paint: { 'line-color': '#ffffff', 'line-width': 10, 'line-opacity': 0.7 }
+            paint: { 
+              'line-color': '#ffffff', 
+              'line-width': ['interpolate', ['linear'], ['zoom'], 8, 4, 12, 10, 16, 18],
+              'line-opacity': 0.7 
+            }
           });
         }
         if (!map.getLayer(`native-layer-${c.id}`)) {
@@ -112,7 +116,11 @@ export default function MapArea({ isFullscreen = false }: { isFullscreen?: boole
             type: 'line',
             source: sid,
             layout: { 'line-cap': 'round', 'line-join': 'round' },
-            paint: { 'line-color': color, 'line-width': 6, 'line-opacity': 1 }
+            paint: { 
+              'line-color': color, 
+              'line-width': ['interpolate', ['linear'], ['zoom'], 8, 3, 12, 6, 16, 12],
+              'line-opacity': 1 
+            }
           });
         }
       });
